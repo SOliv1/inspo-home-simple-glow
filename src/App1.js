@@ -1,12 +1,18 @@
 import { useSelector } from "react-redux";
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import './App.css';
-
 import { WeatherPanel } from './features/weather/WeatherPanel';
-import { JournalEntries } from './features/journal/JournalEntries';
-import { TaglineRotator } from './components/TaglineRotator';
-import { TodoPanel } from './features/todos/TodoPanel';
+import {taglineData} from './data/taglineData';
+import { Tagline } from "./components/Tagline";
+import { TaglineRotator } from "./components/TaglineRotator";
+import { TaglineOfTheDay } from "./components/TaglineOfTheDay";
+import {JournalService} from "./services/JournalService";
 
+import { JournalPanel } from "./features/journal/JournalEntries";
+import { getEntries } from "./services/JournalService";
+import { createEntry } from "./services/JournalService";
+import { updateEntry } from "./services/JournalService";
+import { deleteEntry } from "./services/JournalService";
 
 
 function App() {
@@ -33,35 +39,6 @@ function App() {
   // Get weather from Redux
   const weather = useSelector((state) => state.weather);
 
-  // Derive season from current month
-  const month = new Date().getMonth(); // 0-11
-  const season =
-    month >= 2 && month <= 4 ? "spring" :
-    month >= 5 && month <= 7 ? "summer" :
-    month >= 8 && month <= 10 ? "autumn" : "winter";
-
-  // Derive mood from weather + time of day
-  const weatherMain = weather?.weather?.[0]?.main || "";
-  let mood = null;
-  if (hour >= 22 || hour < 5) mood = "calm";
-  else if (weatherMain === "Clouds" && hour >= 14 && hour <= 17) mood = "reflective";
-  else if (weatherMain === "Rain" || weatherMain === "Drizzle") mood = "reflective";
-  else if (weatherMain === "Clear") mood = null; // let weather/season pick
-
-  // Mood logic
-  useEffect(() => {
-    if (!weather || !weather.weather) return;
-
-    const hour = new Date().getHours();
-    const isOvercast = weather.weather[0].main === "Clouds";
-    const isAfternoon = hour >= 14 && hour <= 17;
-
-    if (isOvercast && isAfternoon) {
-      document.body.classList.add("mood-silhouette");
-    } else {
-      document.body.classList.remove("mood-silhouette");
-    }
-  }, [weather]);
 
   // Greeting icon
   let greetingIcon = "";
@@ -84,6 +61,7 @@ function App() {
     elements.forEach(el => observer.observe(el));
     return () => observer.disconnect();
   }, []);
+
 
  return (
   <>
@@ -109,13 +87,14 @@ function App() {
           </header>
 
           <div className="header-divider"></div>
+            <section className="journal-entries">
+            <p>Your journal entries will appear here.</p>
+          </section>
 
-          <TaglineRotator weather={weather} season={season} mood={mood} />
-
-          <TodoPanel season={season} mood={mood} />
-
-          <section>
-            <JournalEntries />
+          {/*<section className="journal-panel">
+            <div className="journal-panel fade-on-scroll">
+              <JournalPanel />
+            </div>
           </section>
 
           {/* Checklist + todos go here */}
@@ -134,7 +113,6 @@ function App() {
         </p>
         <p className="quote-author">– Steve Jobs</p>
       </footer>
-
     </div>
   </main>
 </>

@@ -1,44 +1,35 @@
-// src/components/TodoItem.jsx
+// src/features/todos/components/TodoItem.js
 import React from 'react';
 import { useDispatch } from 'react-redux';
-import { toggleTodo, deleteTodo } from '../features/todos/todosSlice';
+import { toggleTodo, deleteTodo } from '../todosSlice';
 
-function TodoItem({ id, text, completed, checkClass }) {
+function TodoItem({ id, text, completed, bubbleBg, bubbleBorder }) {
   const dispatch = useDispatch();
 
-  const handleToggle = () => {
-    dispatch(toggleTodo(id));
-  };
-
-  const handleDelete = () => {
-    dispatch(deleteTodo(id));
-  };
-
   return (
-    <li className={`todo-item todo-item--enter ${completed ? 'completed' : ''}`}>
-      <div className="todo-item-content">
-        <span className="todo-meta-dot" />
-        <p className="todo-text">{text}</p>
-      </div>
+    <li
+      className={`todo-bubble ${completed ? 'todo-bubble--done' : ''}`}
+      style={{ '--bubble-bg': bubbleBg, '--bubble-border': bubbleBorder }}
+    >
+      <button
+        type="button"
+        className="todo-bubble-check"
+        onClick={() => dispatch(toggleTodo(id))}
+        aria-label={completed ? 'Mark as not done' : 'Mark as done'}
+      >
+        {completed ? '✓' : ''}
+      </button>
 
-      <div className="todo-actions">
-        <button
-          type="button"
-          className={`btn-check ${checkClass}`}
-          onClick={handleToggle}
-          aria-label={completed ? 'Mark as not done' : 'Mark as done'}
-        >
-          ✓
-        </button>
+      <span className="todo-bubble-text">{text}</span>
 
-        <button
-          type="button"
-          className="btn-delete"
-          onClick={handleDelete}
-        >
-          Delete
-        </button>
-      </div>
+      <button
+        type="button"
+        className="todo-bubble-delete"
+        onClick={() => dispatch(deleteTodo(id))}
+        aria-label="Delete task"
+      >
+        ×
+      </button>
     </li>
   );
 }
