@@ -1,4 +1,4 @@
-![Inspo Home Cinematic Banner](src/Inspo-home-cinematic-banner.png).
+![Inspo Home Cinematic Banner](src/Inspo-home-cinematic-banner.png)
 
 # This Project deployed on Netlify. view deployment [Here](https://inspo-home.netlify.app/)
 
