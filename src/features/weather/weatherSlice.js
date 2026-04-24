@@ -28,7 +28,10 @@ export const loadWeather = createAsyncThunk(
 
     const tempC = Math.round(data.main.temp);
     const tempF = Math.round((tempC * 9) / 5 + 32);
-    const condition = data.weather?.[0]?.description || 'unknown';
+    // condition = OWM main (e.g. "Clouds", "Rain") — used for CSS classes & icon maps
+    const condition = data.weather?.[0]?.main || 'Unknown';
+    // description = OWM description (e.g. "broken clouds") — used for display text
+    const description = data.weather?.[0]?.description || '';
     const cityName = `${data.name}, ${data.sys?.country || ''}`.trim();
 
     return {
@@ -36,10 +39,11 @@ export const loadWeather = createAsyncThunk(
       tempC,
       tempF,
       condition,
+      description,
       detail: `Feels like ${Math.round(
         data.main.feels_like
       )} °C • Humidity ${data.main.humidity}%`,
-      // ⭐ NEW: include the icon code from the API
+      // include the icon code from the API
       icon: data.weather?.[0]?.icon || "01d",
     };
 
@@ -50,18 +54,17 @@ export const loadWeather = createAsyncThunk(
 const now = new Date();
 
 const initialState = {
-  // basic placeholders until API loads
   city: 'Loading weather…',
   tempC: 0,
   tempF: 32,
-  condition: 'unknown',
+  condition: 'Unknown',
+  description: '',
   detail: '',
   date: formatDate(now),
   time: formatTime(now),
-  status: 'idle', // 'idle' | 'loading' | 'succeeded' | 'failed'
+  status: 'idle',
   error: null,
-
-  icon: "01d", // default to clear day icon
+  icon: "01d",
 };
 
 const weatherSlice = createSlice({
@@ -87,9 +90,8 @@ const weatherSlice = createSlice({
         state.tempC = action.payload.tempC;
         state.tempF = action.payload.tempF;
         state.condition = action.payload.condition;
+        state.description = action.payload.description;
         state.detail = action.payload.detail;
-
-        // ⭐ NEW: store the icon code in Redux
         state.icon = action.payload.icon;
       })
       .addCase(loadWeather.rejected, (state, action) => {

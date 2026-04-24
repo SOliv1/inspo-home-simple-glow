@@ -16,8 +16,6 @@ import {
   WiFog
 } from "react-icons/wi";
 
-import "./WeatherCard.css";
-
 
 // -------------------------
 // WeatherCard
@@ -68,6 +66,7 @@ export function WeatherPanel() {
     tempC,
     tempF,
     condition,
+    description,
     detail,
     date,
     time,
@@ -114,7 +113,7 @@ export function WeatherPanel() {
 
 function getGreetingFromTime(timeOfDay) {
   switch (timeOfDay) {
-    case "earlymorning":
+    case "early morning":
       return "Good Early Morning";
     case "sunrise":
       return "Good Morning";
@@ -150,9 +149,11 @@ function getGreetingFromTime(timeOfDay) {
     );
   }
 
-  // 🌦️ Apply test override
-
+  // condition (main) drives CSS classes + icon maps; description is the friendly display text
   const displayedCondition = testWeather || condition;
+  const displayedDescription = testWeather
+    ? testWeather.toLowerCase()
+    : (description || condition.toLowerCase());
 
   // 🌈🌦️ INSERTED HERE — WEATHER + TIME BLENDED ICON (Option 2)
   let blendedIcon = null;
@@ -229,12 +230,12 @@ function getGreetingFromTime(timeOfDay) {
               onChange={(e) => setTestTimeOfDay(e.target.value || null)}
             >
               <option value="">Real Clock</option>
-              <option value="6">Early Morning</option>
+              <option value="early morning">Early Morning</option>
               <option value="sunrise">Sunrise</option>
               <option value="day">Day</option>
               <option value="sunset">Sunset</option>
               <option value="night">Night</option>
-              <option value="23">Late Night</option>
+              <option value="late night">Late Night</option>
             </select>
           </div>
 
@@ -252,9 +253,9 @@ function getGreetingFromTime(timeOfDay) {
 
 { /* Display the main weather condition, and if the detail is different, show it in a smaller font below. For example, if the condition is "Rain" and the detail is "Feels like 10 °C • Humidity 80%", it will show "Rain" prominently and the detail text below it. This allows users to quickly grasp the main weather condition while still having access to additional information at a glance. */}
       <div className="weather-condition">
-        {displayedCondition}
+        {displayedDescription}
 
-        {detail !== condition && (
+        {detail && (
           <div className="separator">
             <span className="weather-detail">{detail}</span>
           </div>
@@ -288,7 +289,7 @@ function getGreetingFromTime(timeOfDay) {
         <div className="weather-meta-block">
           <WeatherCard
             tempC={tempC}
-            condition={displayedCondition}
+            condition={displayedDescription}
             icon={blendedIcon}
           />
         </div>
