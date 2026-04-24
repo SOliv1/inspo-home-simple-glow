@@ -1,6 +1,6 @@
 // netlify/functions/getWeather.js
 
-export async function handler(event) {
+exports.handler = async function (event) {
   try {
     const { city } = event.queryStringParameters;
 

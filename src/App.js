@@ -132,7 +132,7 @@ function App() {
         <p className="inspo-quote fade-on-scroll">
           “The only way to do great work is to love what you do.”
         </p>
-        <p className="quote-author">– Steve Jobs</p>
+        <p className="quote-author">~ Steve Jobs ~</p>
       </footer>
 
     </div>
